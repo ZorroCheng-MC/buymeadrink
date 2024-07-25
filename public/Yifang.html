@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yi Fang Bubble Tea Order Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        form, #orderTable, #popularityChart, #countdown, #orderSummary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #4CAF50;
+        }
+        #orderSummary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Yi Fang Bubble Tea Order Form</h1>
+    
+    <div id="countdown">Limited Time Offer Ends In: <span id="timer"></span></div>
+
+    <div id="orderSummary">
+        <span>Total Orders: <span id="orderCount">0</span></span>
+        <span>Total Cost: $<span id="totalCost">0.00</span></span>
+    </div>
+
+    <form id="orderForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="drink">Select your drink:</label>
+        <select id="drink" name="drink" required>
+            <optgroup label="Tea 茶類">
+                <option value="Puchong Tea" data-price="4.99">Puchong Tea - $4.99/$5.99</option>
+                <option value="Lugu Oolong Tea" data-price="4.99">Lugu Oolong Tea - $4.99/$5.99</option>
+                <option value="Sun Moon Lake Black Tea" data-price="4.99">Sun Moon Lake Black Tea - $4.99/$5.99</option>
+                <option value="Songboling Mountain Tea" data-price="4.99">Songboling Mountain Tea - $4.99/$5.99</option>
+                <option value="Grass Tea" data-price="4.99">Grass Tea - $4.99/$5.99</option>
+            </optgroup>
+            <optgroup label="Traditional 特色茶">
+                <option value="Traditional Milk Tea" data-price="4.99">Traditional Milk Tea - $4.99/$5.99</option>
+                <option value="Winter Melon Tea" data-price="4.99">Winter Melon Tea - $4.99/$5.99</option>
+                <option value="Grass Jelly Tea" data-price="5.49">Grass Jelly Tea - $5.49/$6.49</option>
+                <option value="Winter Melon Lemonade" data-price="5.49">Winter Melon Lemonade - $5.49/$6.49</option>
+                <option value="Lemon Black Tea" data-price="5.49">Lemon Black Tea - $5.49/$6.49</option>
+            </optgroup>
+            <optgroup label="Sugarcane Series 古早味甘蔗">
+                <option value="Sugarcane Mountain Tea" data-price="5.99">Sugarcane Mountain Tea - $5.99/$6.99</option>
+                <option value="Sugarcane Lemonade" data-price="5.99">Sugarcane Lemonade - $5.99/$6.99</option>
+                <option value="Sugarcane Lemon Green Tea" data-price="5.99">Sugarcane Lemon Green Tea - $5.99/$6.99</option>
+                <option value="Sugarcane Grass Jelly Tea" data-price="5.99">Sugarcane Grass Jelly Tea - $5.99/$6.99</option>
+                <option value="Sugarcane Milk Tea" data-price="6.49">Sugarcane Milk Tea - $6.49/$7.49</option>
+                <option value="Sugarcane Latte" data-price="6.49">Sugarcane Latte - $6.49/$7.49</option>
+            </optgroup>
+            <optgroup label="Fruit Tea 水果茶系列">
+                <option value="Yifang Fruit Tea" data-price="6.49">Yifang Fruit Tea - $6.49/$7.49</option>
+                <option value="Mango Yifang Fruit Tea" data-price="6.49">Mango Yifang Fruit Tea - $6.49/$7.49</option>
+                <option value="Winter Melon Lemon Tea" data-price="5.99">Winter Melon Lemon Tea - $5.99/$6.99</option>
+                <option value="Lemon Fruit Tea" data-price="6.49">Lemon Fruit Tea - $6.49/$7.49</option>
+                <option value="Passion Fruit Tea" data-price="5.99">Passion Fruit Tea - $5.99/$6.99</option>
+                <option value="Lychee Pineapple Tea" data-price="6.49">Lychee Pineapple Tea - $6.49/$7.49</option>
+                <option value="Pineapple Green Tea" data-price="6.49">Pineapple Green Tea - $6.49/$7.49</option>
+                <option value="Aiyu Lemon Green Tea" data-price="6.49">Aiyu Lemon Green Tea - $6.49/$7.49</option>
+                <option value="Plum Green Tea" data-price="6.49">Plum Green Tea - $6.49/$7.49</option>
+                <option value="Peach Fruit Tea" data-price="6.49">Peach Fruit Tea - $6.49/$7.49</option>
+            </optgroup>
+            <optgroup label="Tea Latte 奶蓋茶">
+                <option value="Brown Sugar Pearl Latte" data-price="5.99">Brown Sugar Pearl Latte - $5.99/$6.99</option>
+                <option value="Kyoto Uji Matcha" data-price="6.49">Kyoto Uji Matcha - $6.49/$7.49</option>
+                <option value="Brown Sugar Matcha" data-price="6.49">Brown Sugar Matcha - $6.49/$7.49</option>
+                <option value="Red Bean Oolong Tea Latte" data-price="6.49">Red Bean Oolong Tea Latte - $6.49/$7.49</option>
+                <option value="Brown Sugar Pearl Cocoa" data-price="6.49">Brown Sugar Pearl Cocoa - $6.49/$7.49</option>
+                <option value="Red Bean Taro Latte" data-price="6.49">Red Bean Taro Latte - $6.49/$7.49</option>
+                <option value="Fresh Taro Green Tea Latte" data-price="6.49">Fresh Taro Green Tea Latte - $6.49/$7.49</option>
+                <option value="Pineapple Soy Green Tea Latte" data-price="6.49">Pineapple Soy Green Tea Latte - $6.49/$7.49</option>
+                <option value="Pineapple Soy Latte" data-price="6.49">Pineapple Soy Latte - $6.49/$7.49</option>
+            </optgroup>
+            <optgroup label="Yakult Series 養樂多系列">
+                <option value="Black Tea Yakult" data-price="5.99">Black Tea Yakult - $5.99/$6.99</option>
+                <option value="Oolong Yakult" data-price="5.99">Oolong Yakult - $5.99/$6.99</option>
+                <option value="Winter Melon Yakult" data-price="5.99">Winter Melon Yakult - $5.99/$6.99</option>
+                <option value="Peach Yakult Green Tea" data-price="5.99">Peach Yakult Green Tea - $5.99/$6.99</option>
+                <option value="Yakult Lemon Green Tea" data-price="5.99">Yakult Lemon Green Tea - $5.99/$6.99</option>
+                <option value="Yakult Pineapple Green Tea" data-price="5.99">Yakult Pineapple Green Tea - $5.99/$6.99</option>
+                <option value="Yakult Lychee Green Tea" data-price="5.99">Yakult Lychee Green Tea - $5.99/$6.99</option>
+            </optgroup>
+            <optgroup label="Snow Top 香雪">
+                <option value="Cocoa Snow Top" data-price="5.99">Cocoa Snow Top - $5.99/$6.99</option>
+                <option value="Matcha Snow Top" data-price="5.99">Matcha Snow Top - $5.99/$6.99</option>
+                <option value="Mango Snow Top" data-price="5.99">Mango Snow Top - $5.99/$6.99</option>
+                <option value="Vanilla Oolong Snow Top" data-price="5.99">Vanilla
+                                <option value="Strawberry Snow Top" data-price="6.49">Strawberry Snow Top - $6.49/$7.49</option>
+                <option value="Green Grapes Snow Top" data-price="6.49">Green Grapes Snow Top - $6.49/$7.49</option>
+            </optgroup>
+            <optgroup label="Frappe 冰沙">
+                <option value="Mango Frappe" data-price="6.49">Mango Frappe - $6.49/$7.49</option>
+                <option value="Almond Milk Frappe" data-price="6.49">Almond Milk Frappe - $6.49/$7.49</option>
+                <option value="Lychee Frappe" data-price="6.49">Lychee Frappe - $6.49/$7.49</option>
+                <option value="Strawberry Milk Frappe" data-price="6.49">Strawberry Milk Frappe - $6.49/$7.49</option>
+            </optgroup>
+            <optgroup label="Salty Cream 奶蓋茶">
+                <option value="Black Tea Salty Cream" data-price="5.99">Black Tea Salty Cream - $5.99/$6.99</option>
+                <option value="Green Tea Salty Cream" data-price="5.99">Green Tea Salty Cream - $5.99/$6.99</option>
+                <option value="Mountain Tea Salty Cream" data-price="5.99">Mountain Tea Salty Cream - $5.99/$6.99</option>
+                <option value="Oolong Tea Salty Cream" data-price="5.99">Oolong Tea Salty Cream - $5.99/$6.99</option>
+            </optgroup>
+            <optgroup label="Winter Special 冬季特選">
+                <option value="Longan Ginger Tea" data-price="6.49">Longan Ginger Tea - $6.49/$7.49</option>
+                <option value="Jujube Longan Tea" data-price="6.49">Jujube Longan Tea - $6.49/$7.49</option>
+                <option value="Lemongrass Ginger Tea" data-price="6.49">Lemongrass Ginger Tea - $6.49/$7.49</option>
+                <option value="Ginger Lemon Tea" data-price="6.49">Ginger Lemon Tea - $6.49/$7.49</option>
+                <option value="Sugarcane Ginger Tea" data-price="6.49">Sugarcane Ginger Tea - $6.49/$7.49</option>
+                <option value="Pear Ginger Tea" data-price="6.49">Pear Ginger Tea - $6.49/$7.49</option>
+            </optgroup>
+        </select>
+
+        <label for="size">Size:</label>
+        <select id="size" name="size" required>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select>
+
+        <label for="ice">Ice level:</label>
+        <select id="ice" name="ice" required>
+            <option value="Normal Ice">Normal Ice</option>
+            <option value="Less Ice">Less Ice</option>
+            <option value="No Ice">No Ice</option>
+        </select>
+
+        <label for="sugar">Sugar level:</label>
+        <select id="sugar" name="sugar" required>
+            <option value="100%">100% (Regular)</option>
+            <option value="75%">75%</option>
+            <option value="50%">50% (Half)</option>
+            <option value="25%">25% (Quarter)</option>
+            <option value="0%">0% (No Sugar)</option>
+        </select>
+
+        <input type="submit" value="Place Order">
+    </form>
+
+    <div id="orderTable">
+        <h2>Recent Orders</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Drink</th>
+                    <th>Size</th>
+                    <th>Ice</th>
+                    <th>Sugar</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="popularityChart">
+        <h2>Drink Popularity</h2>
+        <canvas id="drinkChart"></canvas>
+    </div>
+
+    <script>
+        const orderForm = document.getElementById('orderForm');
+        const orderTableBody = document.getElementById('orderTableBody');
+        const ctx = document.getElementById('drinkChart').getContext('2d');
+        const timerElement = document.getElementById('timer');
+        const orderCountElement = document.getElementById('orderCount');
+        const totalCostElement = document.getElementById('totalCost');
+
+        let orders = [];
+        let drinkPopularity = {};
+        let totalOrders = 0;
+        let totalCost = 0;
+
+        // Initialize Chart
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Drink Orders',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }
+            }
+        });
+
+        // Handle form submission
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(orderForm);
+            const order = Object.fromEntries(formData.entries());
+            const drinkElement = document.querySelector(`option[value="${order.drink}"]`);
+            const price = parseFloat(drinkElement.dataset.price);
+            const sizeMultiplier = order.size === 'Large' ? 1.20 : 1.00; // Adjust price for large size
+            const finalPrice = (price * sizeMultiplier).toFixed(2);
+            order.price = finalPrice;
+            orders.push(order);
+            updateOrderTable();
+            updatePopularityChart(order.drink);
+            updateOrderSummary(parseFloat(finalPrice));
+            orderForm.reset();
+        });
+
+        function updateOrderTable() {
+            orderTableBody.innerHTML = '';
+            orders.slice(-5).forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.drink}</td>
+                    <td>${order.size}</td>
+                    <td>${order.ice}</td>
+                    <td>${order.sugar}</td>
+                    <td>$${order.price}</td>
+                `;
+                orderTableBody.appendChild(row);
+            });
+        }
+
+        function updatePopularityChart(drink) {
+            drinkPopularity[drink] = (drinkPopularity[drink] || 0) + 1;
+
+            const sortedDrinks = Object.entries(drinkPopularity)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            chart.data.labels = sortedDrinks.map(item => item[0]);
+            chart.data.datasets[0].data = sortedDrinks.map(item => item[1]);
+            chart.update();
+        }
+
+        function updateOrderSummary(price) {
+            totalOrders++;
+            totalCost += price;
+            orderCountElement.textContent = totalOrders;
+            totalCostElement.textContent = totalCost.toFixed(2);
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0); // 1:00 PM today
+            if (now >= target) {
+                timerElement.textContent = "Offer has ended!";
+                return;
+            }
+
+            const difference = target - now;
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

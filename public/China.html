@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yi Fang Bubble Tea Order Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        form, #orderTable, #popularityChart, #countdown, #orderSummary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #4CAF50;
+        }
+        #orderSummary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>China Drinks Order Form</h1>
+    
+    <div id="countdown">Limited Time Offer Ends In: <span id="timer"></span></div>
+
+    <div id="orderSummary">
+        <span>Total Orders: <span id="orderCount">0</span></span>
+        <span>Total Cost: $<span id="totalCost">0.00</span></span>
+    </div>
+
+    <form id="orderForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="drink">Select your drink:</label>
+        <select id="drink" name="drink" required>
+            <optgroup label="Pure Tea">
+                <option value="經典五柳茶" data-medium="30" data-large="35">經典五柳茶 (Classic Five Willow Tea)</option>
+                <option value="杏仁凍五柳茶" data-medium="35" data-large="49">杏仁凍五柳茶 (Almond Jelly Five Willow Tea)</option>
+                <option value="玉皇青茶王" data-medium="40" data-large="45">玉皇青茶王 (Jade Emperor Green Tea King)</option>
+                <option value="老欉人紅茶" data-medium="30" data-large="35">老欉人紅茶 (Old Man Red Tea)</option>
+                <option value="一指白茶" data-medium="30" data-large="35">一指白茶 (One Finger White Tea)</option>
+                <option value="茉莉綠茶片" data-medium="30" data-large="35">茉莉綠茶片 (Jasmine Green Tea)</option>
+                <option value="清香烏龍" data-medium="30" data-large="35">清香烏龍 (Fragrant Oolong)</option>
+            </optgroup>
+            <optgroup label="Pure Milk">
+                <option value="五柳茶拿鐵" data-medium="50" data-large="60">五柳茶拿鐵 (Five Willow Tea Latte)</option>
+                <option value="鮮奶凍五柳茶拿鐵" data-medium="55" data-large="65">鮮奶凍五柳茶拿鐵 (Fresh Milk Jelly Five Willow Tea Latte)</option>
+                <option value="仙草凍紅茶拿鐵" data-medium="50" data-large="60">仙草凍紅茶拿鐵 (Grass Jelly Red Tea Latte)</option>
+                <option value="桂花蜜人紅茶拿鐵" data-medium="50" data-large="60">桂花蜜人紅茶拿鐵 (Osmanthus Honey Red Tea Latte)</option>
+                <option value="紅豆粉圓拿鐵" data-medium="50" data-large="60">紅豆粉圓拿鐵 (Red Bean Pearl Latte)</option>
+                <option value="珍珠奶茶" data-medium="55" data-large="65">珍珠奶茶 (Pearl Milk Tea)</option>
+            </optgroup>
+            <optgroup label="Milk Tea">
+                <option value="五柳奶茶" data-medium="45" data-large="55">五柳奶茶 (Five Willow Milk Tea)</option>
+                <option value="鮮奶凍五柳奶茶" data-medium="55" data-large="60">鮮奶凍五柳奶茶 (Fresh Milk Jelly Five Willow Milk Tea)</option>
+                <option value="鮮奶完美手沖茶奶" data-medium="65" data-large="65">鮮奶完美手沖茶奶 (Perfect Hand-Brewed Tea with Fresh Milk)</option>
+                <option value="鮮奶完美手沖烏奶" data-medium="65" data-large="65">鮮奶完美手沖烏奶 (Perfect Hand-Brewed Oolong with Fresh Milk)</option>
+                <option value="珍珠手沖烏奶" data-medium="55" data-large="65">珍珠手沖烏奶 (Pearl Hand-Brewed Oolong Milk Tea)</option>
+                <option value="仙草凍綠茶奶" data-medium="45" data-large="55">仙草凍綠茶奶 (Grass Jelly Green Tea Milk)</option>
+                <option value="紅豆粉圓奶" data-medium="45" data-large="55">紅豆粉圓奶 (Red Bean Pearl Milk)</option>
+                <option value="黑糖奶茶" data-medium="50" data-large="60">黑糖奶茶 (Brown Sugar Milk Tea)</option>
+            </optgroup>
+            <optgroup label="Cheese Tea">
+                <option value="五柳奶霜" data-medium="45" data-large="55">五柳奶霜 (Five Willow Cheese Tea)</option>
+                <option value="老欉人奶霜紅茶" data-medium="45" data-large="55">老欉人奶霜紅茶 (Old Man Red Cheese Tea)</option>
+                <option value="茉莉奶霜綠茶" data-medium="45" data-large="55">茉莉奶霜綠茶 (Jasmine Green Cheese Tea)</option>
+                <option value="清香烏龍奶霜" data-medium="45" data-large="55">清香烏龍奶霜 (Fragrant Oolong Cheese Tea)</option>
+            </optgroup>
+            <optgroup label="Fruit Tea">
+                <option value="龍眼冰萃果凍飲" data-medium="55" data-large="65">龍眼冰萃果凍飲 (Longan Ice Brew Jelly Drink)</option>
+                <option value="青草凍綠茶凍飲" data-medium="55" data-large="75">青草凍綠茶凍飲 (Herb Jelly Green Tea Jelly Drink)</option>
+                <option value="檸檬冰茶凍飲" data-medium="55" data-large="65">檸檬冰茶凍飲 (Lemon Ice Tea Jelly Drink)</option>
+                <option value="蜜香紅玉凍飲" data-medium="50" data-large="60">蜜香紅玉凍飲 (Honey Fragrant Ruby Tea Jelly Drink)</option>
+                <option value="仙草凍柚蜜綠茶" data-medium="50" data-large="60">仙草凍柚蜜綠茶 (Grass Jelly Pomelo Honey Green Tea)</option>
+                <option value="蜂蜜柚綠茶" data-medium="50" data-large="60">蜂蜜柚綠茶 (Honey Pomelo Green Tea)</option>
+            </optgroup>
+            <optgroup label="Seasonal Drinks">
+                <option value="雪莓草莓奶酪" data-medium="59" data-large="95">雪莓草莓奶酪 (Snowberry Strawberry Milk Custard)</option>
+                <option value="鳳凰草莓糖奶茶" data-medium="55" data-large="65">鳳凰草莓糖奶茶 (Phoenix Strawberry Candy
+                                <option value="鳳凰草莓糖奶茶" data-medium="55" data-large="65">鳳凰草莓糖奶茶 (Phoenix Strawberry Candy Milk Tea)</option>
+                <option value="濃厚草莓乳奶茶" data-medium="45" data-large="55">濃厚草莓乳奶茶 (Rich Strawberry Milk Tea)</option>
+                <option value="抹茶拿鐵珍珠飲" data-medium="40" data-large="50">抹茶拿鐵珍珠飲 (Matcha Latte Pearl Drink)</option>
+                <option value="青茶多多飲" data-medium="55" data-large="65">青茶多多飲 (Green Tea Duoduo Drink)</option>
+                <option value="蜜蜂多多飲" data-medium="55" data-large="65">蜜蜂多多飲 (Honey Duoduo Drink)</option>
+                <option value="蜂蜜金桔凍飲" data-medium="59" data-large="69">蜂蜜金桔凍飲 (Honey Kumquat Jelly Drink)</option>
+            </optgroup>
+        </select>
+
+        <label for="size">Size:</label>
+        <select id="size" name="size" required>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select>
+
+        <label for="ice">Ice level:</label>
+        <select id="ice" name="ice" required>
+            <option value="Normal Ice">Normal Ice</option>
+            <option value="Less Ice">Less Ice</option>
+            <option value="No Ice">No Ice</option>
+        </select>
+
+        <label for="sugar">Sugar level:</label>
+        <select id="sugar" name="sugar" required>
+            <option value="100%">100% (Regular)</option>
+            <option value="75%">75%</option>
+            <option value="50%">50% (Half)</option>
+            <option value="25%">25% (Quarter)</option>
+            <option value="0%">0% (No Sugar)</option>
+        </select>
+
+        <input type="submit" value="Place Order">
+    </form>
+
+    <div id="orderTable">
+        <h2>Recent Orders</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Drink</th>
+                    <th>Size</th>
+                    <th>Ice</th>
+                    <th>Sugar</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="popularityChart">
+        <h2>Drink Popularity</h2>
+        <canvas id="drinkChart"></canvas>
+    </div>
+
+    <script>
+        const orderForm = document.getElementById('orderForm');
+        const orderTableBody = document.getElementById('orderTableBody');
+        const ctx = document.getElementById('drinkChart').getContext('2d');
+        const timerElement = document.getElementById('timer');
+        const orderCountElement = document.getElementById('orderCount');
+        const totalCostElement = document.getElementById('totalCost');
+
+        let orders = [];
+        let drinkPopularity = {};
+        let totalOrders = 0;
+        let totalCost = 0;
+
+        // Initialize Chart
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Drink Orders',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }
+            }
+        });
+
+        // Handle form submission
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(orderForm);
+            const order = Object.fromEntries(formData.entries());
+            const drinkElement = document.querySelector(`option[value="${order.drink}"]`);
+            const price = parseFloat(order.size === "Medium" ? drinkElement.dataset.medium : drinkElement.dataset.large);
+            order.price = price.toFixed(2);
+            orders.push(order);
+            updateOrderTable();
+            updatePopularityChart(order.drink);
+            updateOrderSummary(price);
+            orderForm.reset();
+        });
+
+        function updateOrderTable() {
+            orderTableBody.innerHTML = '';
+            orders.slice(-5).forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.drink}</td>
+                    <td>${order.size}</td>
+                    <td>${order.ice}</td>
+                    <td>${order.sugar}</td>
+                    <td>$${order.price}</td>
+                `;
+                orderTableBody.appendChild(row);
+            });
+        }
+
+        function updatePopularityChart(drink) {
+            drinkPopularity[drink] = (drinkPopularity[drink] || 0) + 1;
+
+            const sortedDrinks = Object.entries(drinkPopularity)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            chart.data.labels = sortedDrinks.map(item => item[0]);
+            chart.data.datasets[0].data = sortedDrinks.map(item => item[1]);
+            chart.update();
+        }
+
+        function updateOrderSummary(price) {
+            totalOrders++;
+            totalCost += price;
+            orderCountElement.textContent = totalOrders;
+            totalCostElement.textContent = totalCost.toFixed(2);
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0); // 1:00 PM today
+            if (now >= target) {
+                timerElement.textContent = "Offer has ended!";
+                return;
+            }
+
+            const difference = target - now;
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

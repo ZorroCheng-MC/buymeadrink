@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yi Fang Bubble Tea Order Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        form, #orderTable, #popularityChart, #countdown, #orderSummary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #4CAF50;
+        }
+        #orderSummary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Yi Fang Bubble Tea Order Form</h1>
+    
+    <div id="countdown">Limited Time Offer Ends In: <span id="timer"></span></div>
+
+    <div id="orderSummary">
+        <span>Total Orders: <span id="orderCount">0</span></span>
+        <span>Total Cost: $<span id="totalCost">0.00</span></span>
+    </div>
+
+    <form id="orderForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="drink">Select your drink:</label>
+        <select id="drink" name="drink" required>
+            <optgroup label="Tea">
+                <option value="鐵觀音" data-price="5.99">鐵觀音 (Iron Goddess) - $5.99</option>
+                <option value="四季春" data-price="5.99">四季春 (Four Seasons Spring) - $5.99</option>
+                <option value="紅玉" data-price="5.99">紅玉 (Ruby Black) - $5.99</option>
+                <option value="柚檸綠" data-price="5.99">柚檸綠 (Grapefruit Green) - $5.99</option>
+            </optgroup>
+            <optgroup label="Fruit Tea">
+                <option value="芒果綠" data-price="6.99">芒果綠 (Mango Green) - $6.99</option>
+                <option value="西瓜綠" data-price="5.49">西瓜綠 (Watermelon Green) - $5.49</option>
+                <option value="檸檬綠" data-price="5.49">檸檬綠 (Lemon Green) - $5.49</option>
+                <option value="百香綠" data-price="5.99">百香綠 (Passionfruit Green) - $5.99</option>
+                <option value="荔枝綠" data-price="5.99">荔枝綠 (Lychee Green) - $5.99</option>
+                <option value="水蜜桃綠" data-price="5.99">水蜜桃綠 (Peach Green) - $5.99</option>
+                <option value="鳳梨綠" data-price="5.99">鳳梨綠 (Pineapple Green) - $5.99</option>
+            </optgroup>
+            <optgroup label="Tea Latte">
+                <option value="黑糖珍珠鮮奶" data-price="6.99">黑糖珍珠鮮奶 (Brown Sugar Pearl Fresh Milk) - $6.99</option>
+                <option value="黑糖抹茶鮮奶" data-price="6.99">黑糖抹茶鮮奶 (Brown Sugar Matcha Fresh Milk) - $6.99</option>
+                <option value="黑糖抹茶珍珠鮮奶" data-price="7.49">黑糖抹茶珍珠鮮奶 (Brown Sugar Matcha Pearl Fresh Milk) - $7.49</option>
+                <option value="紅豆抹茶鮮奶" data-price="7.49">紅豆抹茶鮮奶 (Red Bean Matcha Fresh Milk) - $7.49</option>
+                <option value="可可黑糖珍珠鮮奶" data-price="7.49">可可黑糖珍珠鮮奶 (Cocoa Brown Sugar Pearl Fresh Milk) - $7.49</option>
+                <option value="紅豆黑糖鮮奶" data-price="6.99">紅豆黑糖鮮奶 (Red Bean Brown Sugar Fresh Milk) - $6.99</option>
+            </optgroup>
+        </select>
+
+        <label for="size">Size:</label>
+        <select id="size" name="size" required>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select>
+
+        <label for="ice">Ice level:</label>
+        <select id="ice" name="ice" required>
+            <option value="Normal Ice">Normal Ice</option>
+            <option value="Less Ice">Less Ice</option>
+            <option value="No Ice">No Ice</option>
+        </select>
+
+        <label for="sugar">Sugar level:</label>
+        <select id="sugar" name="sugar" required>
+            <option value="100%">100% (Regular)</option>
+            <option value="75%">75%</option>
+            <option value="50%">50% (Half)</option>
+            <option value="25%">25% (Quarter)</option>
+            <option value="0%">0% (No Sugar)</option>
+        </select>
+
+        <input type="submit" value="Place Order">
+    </form>
+
+    <div id="orderTable">
+        <h2>Recent Orders</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Drink</th>
+                    <th>Size</th>
+                    <th>Ice</th>
+                    <th>Sugar</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="popularityChart">
+        <h2>Drink Popularity</h2>
+        <canvas id="drinkChart"></canvas>
+    </div>
+
+    <script>
+        const orderForm = document.getElementById('orderForm');
+        const orderTableBody = document.getElementById('orderTableBody');
+        const ctx = document.getElementById('drinkChart').getContext('2d');
+        const timerElement = document.getElementById('timer');
+        const orderCountElement = document.getElementById('orderCount');
+        const totalCostElement = document.getElementById('totalCost');
+
+        let orders = [];
+        let drinkPopularity = {};
+        let totalOrders = 0;
+        let totalCost = 0;
+
+        // Initialize Chart
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Drink Orders',
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }
+            }
+        });
+
+        // Handle form submission
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(orderForm);
+            const order = Object.fromEntries(formData.entries());
+            const drinkElement = document.querySelector(`option[value="${order.drink}"]`);
+            const price = parseFloat(drinkElement.dataset.price);
+            order.price = price.toFixed(2);
+            orders.push(order);
+            updateOrderTable();
+            updatePopularityChart(order.drink);
+            updateOrderSummary(price);
+            orderForm.reset();
+        });
+
+        function updateOrderTable() {
+            orderTableBody.innerHTML = '';
+            orders.slice(-5).forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.drink}</td>
+                    <td>${order.size}</td>
+                    <td>${order.ice}</td>
+                    <td>${order.sugar}</td>
+                    <td>$${order.price}</td>
+                `;
+                orderTableBody.appendChild(row);
+            });
+        }
+
+        function updatePopularityChart(drink) {
+            drinkPopularity[drink] = (drinkPopularity[drink] || 0) + 1;
+
+            const sortedDrinks = Object.entries(drinkPopularity)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            chart.data.labels = sortedDrinks.map(item => item[0]);
+            chart.data.datasets[0].data = sortedDrinks.map(item => item[1]);
+            chart.update();
+        }
+
+        function updateOrderSummary(price) {
+            totalOrders++;
+            totalCost += price;
+            orderCountElement.textContent = totalOrders;
+            totalCostElement.textContent = totalCost.toFixed(2);
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 0, 0); // 1:00 PM today
+            if (now >= target) {
+                timerElement.textContent = "Offer has ended!";
+                return;
+            }
+
+            const difference = target - now;
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>

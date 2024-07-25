@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一芳台灣水果茶員工訂單表格</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #4a4a4a;
+        }
+
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        #counter,
+        #totalSpent {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        #qrcode {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #orderList {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        #chartContainer {
+            width: 100%;
+            height: 400px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>一芳台灣水果茶員工訂單表格</h1>
+    <div id="counter">剩餘預算: ¥<span id="budget">17000</span></div>
+    <div id="totalSpent">總消費: ¥<span id="spent">0</span></div>
+    <form id="orderForm">
+        <label for="name">姓名：</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="drink">選擇飲品：</label>
+        <select id="drink" name="drink" required>
+            <option value="">請選擇飲品</option>
+            <option value="蒲種烏龍">蒲種烏龍 (¥30)</option>
+            <option value="日月潭紅茶">日月潭紅茶 (¥30)</option>
+            <option value="仙草奶茶">仙草奶茶 (¥35)</option>
+            <option value="冬瓜茶">冬瓜茶 (¥25)</option>
+            <option value="甘蔗青茶">甘蔗青茶 (¥35)</option>
+            <option value="一芳水果茶">一芳水果茶 (¥40)</option>
+            <option value="百香果綠茶">百香果綠茶 (¥35)</option>
+            <option value="黑糖珍珠鮮奶">黑糖珍珠鮮奶 (¥40)</option>
+            <option value="紅豆黑茶">紅豆黑茶 (¥35)</option>
+            <option value="養樂多青茶">養樂多青茶 (¥35)</option>
+        </select>
+
+        <label for="size">杯型：</label>
+        <select id="size" name="size" required>
+            <option value="中杯">中杯</option>
+            <option value="大杯">大杯 (+¥5)</option>
+        </select>
+
+        <label for="ice">冰量：</label>
+        <select id="ice" name="ice" required>
+            <option value="正常冰">正常冰</option>
+            <option value="少冰">少冰</option>
+            <option value="去冰">去冰</option>
+        </select>
+
+        <label for="sugar">甜度：</label>
+        <select id="sugar" name="sugar" required>
+            <option value="100%">100%</option>
+            <option value="75%">75%</option>
+            <option value="50%">50%</option>
+            <option value="25%">25%</option>
+            <option value="無糖">無糖</option>
+        </select>
+
+        <input type="submit" value="提交訂單">
+    </form>
+
+    <div id="qrcode"></div>
+
+    <div id="chartContainer">
+        <canvas id="orderChart"></canvas>
+    </div>
+
+    <h2>已提交的訂單</h2>
+    <div id="orderList"></div>
+
+    <script>
+        // Generate QR Code
+        new QRCode(document.getElementById("qrcode"), "https://masterconcept.ai");
+
+        // Simulated order list and drink prices
+        const orders = [];
+        const drinkPrices = {
+            "蒲種烏龍": 30,
+            "日月潭紅茶": 30,
+            "仙草奶茶": 35,
+            "冬瓜茶": 25,
+            "甘蔗青茶": 35,
+            "一芳水果茶": 40,
+            "百香果綠茶": 35,
+            "黑糖珍珠鮮奶": 40,
+            "紅豆黑茶": 35,
+            "養樂多青茶": 35
+        };
+
+        // Initialize chart
+        const ctx = document.getElementById('orderChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(drinkPrices),
+                datasets: [{
+                    label: '訂單數量',
+                    data: new Array(Object.keys(drinkPrices).length).fill(0),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null) {
+                                    label += context.parsed.x + ' 杯';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        document.getElementById('orderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const drink = document.getElementById('drink').value.split(' ')[0];
+            const size = document.getElementById('size').value;
+            const ice = document.getElementById('ice').value;
+            const sugar = document.getElementById('sugar').value;
+
+            // Calculate price
+            let price = drinkPrices[drink];
+            if (size === '大杯') price += 5;
+
+            // Add order to list
+            orders.push({ name, drink, size, ice, sugar, price });
+
+            // Update order list display
+            updateOrderList();
+
+            // Decrease budget
+            decreaseBudget(price);
+
+            // Update chart
+            updateChart();
+
+            // Clear form
+            this.reset();
+        });
+
+        function updateOrderList() {
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = orders.map(order =>
+                `<p>${order.name}: ${order.drink} (${order.size}, ${order.ice}, ${order.sugar}) - ¥${order.price}</p>`
+            ).join('');
+        }
+
+        function decreaseBudget(amount) {
+            const budgetElement = document.getElementById('budget');
+            const spentElement = document.getElementById('spent');
+            let currentBudget = parseInt(budgetElement.textContent);
+            let currentSpent = parseInt(spentElement.textContent);
+            currentBudget -= amount;
+            currentSpent += amount;
+            budgetElement.textContent = currentBudget;
+            spentElement.textContent = currentSpent;
+        }
+
+        function updateChart() {
+            const drinkCounts = Object.fromEntries(Object.keys(drinkPrices).map(drink => [drink, 0]));
+            orders.forEach(order => {
+                drinkCounts[order.drink]++;
+            });
+
+            chart.data.datasets[0].data = Object.values(drinkCounts);
+            chart.update();
+
+            // Add total order sum to the right of the chart
+            const totalSum = orders.reduce((sum, order) => sum + order.price, 0);
+            if (chart.options.plugins.annotation) {
+                chart.options.plugins.annotation.annotations.totalSum.content = `總計: ¥${totalSum}`;
+            } else {
+                chart.options.plugins.annotation = {
+                    annotations: {
+                        totalSum: {
+                            type: 'label',
+                            xValue: 100,
+                            yValue: 50,
+                            content: `總計: ¥${totalSum}`,
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                };
+            }
+            chart.update();
+        }
+    </script>
+</body>
+
+</html>
